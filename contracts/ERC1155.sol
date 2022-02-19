@@ -1,33 +1,41 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (token/ERC1155/ERC1155.sol)
+
 pragma solidity ^0.8.0;
+
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
+
 /**
  * @dev Implementation of the basic standard multi-token.
  * See https://eips.ethereum.org/EIPS/eip-1155
  * Originally based on code by Enjin: https://github.com/enjin/erc-1155
  *
- * Available since v3.1.
+ * _Available since v3.1._
  */
 contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     using Address for address;
+
     // Mapping from token ID to account balances
     mapping(uint256 => mapping(address => uint256)) private _balances;
+
     // Mapping from account to operator approvals
     mapping(address => mapping(address => bool)) private _operatorApprovals;
+
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
+
     /**
      * @dev See {_setURI}.
      */
-constructor(string memory uri_) {
+    constructor(string memory uri_) {
         _setURI(uri_);
     }
+
     /**
      * @dev See {IERC165-supportsInterface}.
      */
@@ -37,10 +45,11 @@ constructor(string memory uri_) {
             interfaceId == type(IERC1155MetadataURI).interfaceId ||
             super.supportsInterface(interfaceId);
     }
+
     /**
      * @dev See {IERC1155MetadataURI-uri}.
      *
-     * This implementation returns the same URI for all token types. It relies
+     * This implementation returns the same URI for *all* token types. It relies
      * on the token type ID substitution mechanism
      * https://eips.ethereum.org/EIPS/eip-1155#metadata[defined in the EIP].
      *
@@ -50,6 +59,7 @@ constructor(string memory uri_) {
     function uri(uint256) public view virtual override returns (string memory) {
         return _uri;
     }
+
     /**
      * @dev See {IERC1155-balanceOf}.
      *
@@ -61,6 +71,7 @@ constructor(string memory uri_) {
         require(account != address(0), "ERC1155: balance query for the zero address");
         return _balances[id][account];
     }
+
     /**
      * @dev See {IERC1155-balanceOfBatch}.
      *
@@ -76,24 +87,30 @@ constructor(string memory uri_) {
         returns (uint256[] memory)
     {
         require(accounts.length == ids.length, "ERC1155: accounts and ids length mismatch");
+
         uint256[] memory batchBalances = new uint256[](accounts.length);
+
         for (uint256 i = 0; i < accounts.length; ++i) {
             batchBalances[i] = balanceOf(accounts[i], ids[i]);
         }
+
         return batchBalances;
     }
+
     /**
      * @dev See {IERC1155-setApprovalForAll}.
      */
     function setApprovalForAll(address operator, bool approved) public virtual override {
         _setApprovalForAll(_msgSender(), operator, approved);
     }
+
     /**
      * @dev See {IERC1155-isApprovedForAll}.
      */
     function isApprovedForAll(address account, address operator) public view virtual override returns (bool) {
         return _operatorApprovals[account][operator];
     }
+
     /**
      * @dev See {IERC1155-safeTransferFrom}.
      */
@@ -110,6 +127,7 @@ constructor(string memory uri_) {
         );
         _safeTransferFrom(from, to, id, amount, data);
     }
+
     /**
      * @dev See {IERC1155-safeBatchTransferFrom}.
      */
@@ -126,6 +144,7 @@ constructor(string memory uri_) {
         );
         _safeBatchTransferFrom(from, to, ids, amounts, data);
     }
+
     /**
      * @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
      *
@@ -138,6 +157,7 @@ constructor(string memory uri_) {
      * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
      * acceptance magic value.
      */
+     
     function _safeTransferFrom(
         address from,
         address to,
@@ -146,17 +166,23 @@ constructor(string memory uri_) {
         bytes memory data
     ) internal virtual {
         require(to != address(0), "ERC1155: transfer to the zero address");
+
         address operator = _msgSender();
+
         _beforeTokenTransfer(operator, from, to, _asSingletonArray(id), _asSingletonArray(amount), data);
+
         uint256 fromBalance = _balances[id][from];
         require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
         unchecked {
             _balances[id][from] = fromBalance - amount;
         }
         _balances[id][to] += amount;
+
         emit TransferSingle(operator, from, to, id, amount);
+
         _doSafeTransferAcceptanceCheck(operator, from, to, id, amount, data);
     }
+
     /**
      * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {_safeTransferFrom}.
      *
@@ -176,11 +202,15 @@ constructor(string memory uri_) {
     ) internal virtual {
         require(ids.length == amounts.length, "ERC1155: ids and amounts length mismatch");
         require(to != address(0), "ERC1155: transfer to the zero address");
+
         address operator = _msgSender();
+
         _beforeTokenTransfer(operator, from, to, ids, amounts, data);
+
         for (uint256 i = 0; i < ids.length; ++i) {
             uint256 id = ids[i];
             uint256 amount = amounts[i];
+
             uint256 fromBalance = _balances[id][from];
             require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
             unchecked {
@@ -188,9 +218,12 @@ constructor(string memory uri_) {
             }
             _balances[id][to] += amount;
         }
+
         emit TransferBatch(operator, from, to, ids, amounts);
+
         _doSafeBatchTransferAcceptanceCheck(operator, from, to, ids, amounts, data);
     }
+
     /**
      * @dev Sets a new URI for all token types, by relying on the token type ID
      * substitution mechanism
@@ -213,6 +246,7 @@ constructor(string memory uri_) {
     function _setURI(string memory newuri) internal virtual {
         _uri = newuri;
     }
+
     /**
      * @dev Creates `amount` tokens of token type `id`, and assigns them to `to`.
      *
@@ -229,14 +263,19 @@ constructor(string memory uri_) {
         uint256 id,
         uint256 amount,
         bytes memory data
-    ) internal virtual {
+    ) external {
         require(to != address(0), "ERC1155: mint to the zero address");
+
         address operator = _msgSender();
+
         _beforeTokenTransfer(operator, address(0), to, _asSingletonArray(id), _asSingletonArray(amount), data);
+
         _balances[id][to] += amount;
         emit TransferSingle(operator, address(0), to, id, amount);
+
         _doSafeTransferAcceptanceCheck(operator, address(0), to, id, amount, data);
     }
+
     /**
      * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {_mint}.
      *
@@ -251,17 +290,23 @@ constructor(string memory uri_) {
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory data
-    ) internal virtual {
+    ) external {
         require(to != address(0), "ERC1155: mint to the zero address");
         require(ids.length == amounts.length, "ERC1155: ids and amounts length mismatch");
+
         address operator = _msgSender();
+
         _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
+
         for (uint256 i = 0; i < ids.length; i++) {
             _balances[ids[i]][to] += amounts[i];
         }
+
         emit TransferBatch(operator, address(0), to, ids, amounts);
+
         _doSafeBatchTransferAcceptanceCheck(operator, address(0), to, ids, amounts, data);
     }
+
     /**
      * @dev Destroys `amount` tokens of token type `id` from `from`
      *
@@ -276,15 +321,20 @@ constructor(string memory uri_) {
         uint256 amount
     ) internal virtual {
         require(from != address(0), "ERC1155: burn from the zero address");
+
         address operator = _msgSender();
+
         _beforeTokenTransfer(operator, from, address(0), _asSingletonArray(id), _asSingletonArray(amount), "");
+
         uint256 fromBalance = _balances[id][from];
         require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
         unchecked {
             _balances[id][from] = fromBalance - amount;
         }
+
         emit TransferSingle(operator, from, address(0), id, amount);
     }
+
     /**
      * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {_burn}.
      *
@@ -299,19 +349,25 @@ constructor(string memory uri_) {
     ) internal virtual {
         require(from != address(0), "ERC1155: burn from the zero address");
         require(ids.length == amounts.length, "ERC1155: ids and amounts length mismatch");
+
         address operator = _msgSender();
+
         _beforeTokenTransfer(operator, from, address(0), ids, amounts, "");
+
         for (uint256 i = 0; i < ids.length; i++) {
             uint256 id = ids[i];
             uint256 amount = amounts[i];
+
             uint256 fromBalance = _balances[id][from];
             require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
             unchecked {
                 _balances[id][from] = fromBalance - amount;
             }
         }
+
         emit TransferBatch(operator, from, address(0), ids, amounts);
     }
+
     /**
      * @dev Approve `operator` to operate on all of `owner` tokens
      *
@@ -326,6 +382,7 @@ constructor(string memory uri_) {
         _operatorApprovals[owner][operator] = approved;
         emit ApprovalForAll(owner, operator, approved);
     }
+
     /**
      * @dev Hook that is called before any token transfer. This includes minting
      * and burning, as well as batched variants.
@@ -354,6 +411,7 @@ constructor(string memory uri_) {
         uint256[] memory amounts,
         bytes memory data
     ) internal virtual {}
+
     function _doSafeTransferAcceptanceCheck(
         address operator,
         address from,
@@ -374,6 +432,7 @@ constructor(string memory uri_) {
             }
         }
     }
+
     function _doSafeBatchTransferAcceptanceCheck(
         address operator,
         address from,
@@ -396,9 +455,11 @@ constructor(string memory uri_) {
             }
         }
     }
+
     function _asSingletonArray(uint256 element) private pure returns (uint256[] memory) {
         uint256[] memory array = new uint256[](1);
         array[0] = element;
+
         return array;
     }
 }
