@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
  * @dev Implementation of the basic standard multi-token.
@@ -20,6 +21,7 @@ import "@openzeppelin/contracts/utils/Context.sol";
 contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     using Address for address;
 
+
     // Mapping from token ID to account balances
     mapping(uint256 => mapping(address => uint256)) private _balances;
 
@@ -28,6 +30,7 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
+  string public baseExtension = ".json";
 
     /**
      * @dev See {_setURI}.
@@ -56,8 +59,10 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
      * Clients calling this function must replace the `\{id\}` substring with the
      * actual token type ID.
      */
-    function uri(uint256) public view virtual override returns (string memory) {
-        return _uri;
+    function uri(uint256 tokenId) public view virtual override returns (string memory) {
+       return bytes(_uri).length > 0
+        ? string(abi.encodePacked(_uri, Strings.toString(tokenId), baseExtension))
+        : "";
     }
 
     /**
@@ -157,7 +162,6 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
      * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
      * acceptance magic value.
      */
-     
     function _safeTransferFrom(
         address from,
         address to,
