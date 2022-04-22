@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at Etherscan.io on 2021-10-07
-*/
-
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.0;
 
@@ -837,7 +833,7 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IERC20-approve}.
  */
-contract WempToken is Context, IERC20, IERC20Metadata, Ownable, Pausable {
+contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     using SafeMath for uint256;
     using Address for address;
 
@@ -851,13 +847,13 @@ contract WempToken is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     address[] private _excluded;
    
     uint256 private constant MAX = ~uint256(0);
-    uint256 private constant initialSupply = 1000000 * 10**9 * 10**18;   // initial supply
-    uint256 private _tTotal = initialSupply - (initialSupply * 40 / 100);   // supply after deflation
+    uint256 private constant initialSupply = 777 * 10**6 * 10**18;   // initial supply
+    uint256 private _tTotal = 400 * 10**6 * 10**18;   // supply after deflation
     uint256 private _rTotal = (MAX - (MAX % _tTotal));
     uint256 private _tFeeTotal;
 
-    string private constant _name = "Women Empowerment Token";
-    string private constant _symbol = "WEMP";
+    string private constant _name = "Galaxii";
+    string private constant _symbol = "GAL";
     uint8 private constant _decimals = 18;
     
     uint256 public taxFee = 2;

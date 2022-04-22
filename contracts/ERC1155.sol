@@ -63,7 +63,8 @@ mapping(uint256 => string) private _tokenURIs;
     function uri(uint256 tokenId) public view virtual override returns (string memory) {
      return _tokenURI(tokenId);
     }
-function _tokenURI(uint256 tokenId) internal view returns (string memory) {
+    
+    function _tokenURI(uint256 tokenId) internal view returns (string memory) {
     return _tokenURIs[tokenId];
   }
 
