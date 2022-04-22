@@ -31,12 +31,13 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
   string public baseExtension = ".json";
+mapping(uint256 => string) private _tokenURIs;
 
+  
     /**
      * @dev See {_setURI}.
      */
-    constructor(string memory uri_) {
-        _setURI(uri_);
+    constructor() {
     }
 
     /**
@@ -60,11 +61,15 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
      * actual token type ID.
      */
     function uri(uint256 tokenId) public view virtual override returns (string memory) {
-       return bytes(_uri).length > 0
-        ? string(abi.encodePacked(_uri, Strings.toString(tokenId), baseExtension))
-        : "";
+     return _tokenURI(tokenId);
     }
+function _tokenURI(uint256 tokenId) internal view returns (string memory) {
+    return _tokenURIs[tokenId];
+  }
 
+  function _setTokenURI(uint256 tokenId, string memory tokenUri) virtual internal {
+    _tokenURIs[tokenId] = tokenUri;
+  }
     /**
      * @dev See {IERC1155-balanceOf}.
      *
@@ -266,15 +271,19 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         address to,
         uint256 id,
         uint256 amount,
-        bytes memory data
+        bytes memory data,
+        string memory tokenUri
     ) external {
         require(to != address(0), "ERC1155: mint to the zero address");
-
+                require(bytes(tokenUri).length>0,"Invalid URI");
+        require(bytes(_tokenURI(id)).length<=0,"Already Minted");
         address operator = _msgSender();
 
         _beforeTokenTransfer(operator, address(0), to, _asSingletonArray(id), _asSingletonArray(amount), data);
 
         _balances[id][to] += amount;
+        _setTokenURI(id, tokenUri);
+
         emit TransferSingle(operator, address(0), to, id, amount);
 
         _doSafeTransferAcceptanceCheck(operator, address(0), to, id, amount, data);
@@ -293,7 +302,8 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         address to,
         uint256[] memory ids,
         uint256[] memory amounts,
-        bytes memory data
+        bytes memory data,
+        string[] memory tokenUrilist
     ) external {
         require(to != address(0), "ERC1155: mint to the zero address");
         require(ids.length == amounts.length, "ERC1155: ids and amounts length mismatch");
@@ -304,6 +314,8 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
         for (uint256 i = 0; i < ids.length; i++) {
             _balances[ids[i]][to] += amounts[i];
+                    _setTokenURI(ids[i], tokenUrilist[i]);
+
         }
 
         emit TransferBatch(operator, address(0), to, ids, amounts);
