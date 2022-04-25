@@ -10,15 +10,9 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-/**
- * @dev Implementation of the basic standard multi-token.
- * See https://eips.ethereum.org/EIPS/eip-1155
- * Originally based on code by Enjin: https://github.com/enjin/erc-1155
- *
- * _Available since v3.1._
- */
-contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
+contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
     using Address for address;
 
 
@@ -30,8 +24,9 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
-  string public baseExtension = ".json";
-mapping(uint256 => string) private _tokenURIs;
+    uint256 private _totalSupply=0;
+    string public baseExtension = ".json";
+    mapping(uint256 => string) private _tokenURIs;
 
   
     /**
@@ -269,15 +264,16 @@ mapping(uint256 => string) private _tokenURIs;
      * acceptance magic value.
      */
     function _mint(
-        address to,
+        address to, 
         uint256 id,
         uint256 amount,
         bytes memory data,
         string memory tokenUri
-    ) external {
+    ) onlyOwner external {
         require(to != address(0), "ERC1155: mint to the zero address");
-                require(bytes(tokenUri).length>0,"Invalid URI");
-        require(bytes(_tokenURI(id)).length<=0,"Already Minted");
+        require(bytes(tokenUri).length>0,"Invalid URI");
+        require(bytes(_tokenURI(id)).length<=0,"Already Minted"); //
+        require(amount == 1, "Amount should be 1"); //
         address operator = _msgSender();
 
         _beforeTokenTransfer(operator, address(0), to, _asSingletonArray(id), _asSingletonArray(amount), data);
@@ -288,6 +284,7 @@ mapping(uint256 => string) private _tokenURIs;
         emit TransferSingle(operator, address(0), to, id, amount);
 
         _doSafeTransferAcceptanceCheck(operator, address(0), to, id, amount, data);
+        _totalSupply = _totalSupply+amount;
     }
 
     /**
@@ -308,6 +305,14 @@ mapping(uint256 => string) private _tokenURIs;
     ) external {
         require(to != address(0), "ERC1155: mint to the zero address");
         require(ids.length == amounts.length, "ERC1155: ids and amounts length mismatch");
+         for (uint256 i = 0; i < ids.length; i++) {
+         require(bytes(_tokenURI(ids[i])).length<=0,"Already Minted"); //
+        }
+        for (uint256 i = 0; i < amounts.length; i++) {
+        require(amounts[i] == 1, "Amount should be 1"); //
+        }
+
+        
 
         address operator = _msgSender();
 
@@ -322,6 +327,7 @@ mapping(uint256 => string) private _tokenURIs;
         emit TransferBatch(operator, address(0), to, ids, amounts);
 
         _doSafeBatchTransferAcceptanceCheck(operator, address(0), to, ids, amounts, data);
+        _totalSupply = _totalSupply+amounts.length;
     }
 
     /**
@@ -337,7 +343,7 @@ mapping(uint256 => string) private _tokenURIs;
         uint256 id,
         uint256 amount
     ) internal virtual {
-        require(from != address(0), "ERC1155: burn from the zero address");
+        require(from != address(0), "ERC1155: burn from the zero address"); 
 
         address operator = _msgSender();
 
@@ -348,9 +354,14 @@ mapping(uint256 => string) private _tokenURIs;
         unchecked {
             _balances[id][from] = fromBalance - amount;
         }
-
+        _totalSupply = _totalSupply-amount;
+   
         emit TransferSingle(operator, from, address(0), id, amount);
     }
+
+    function burn( address _from, uint256 _id, uint256 _amount) external virtual {
+        _burn(_from, _id,_amount);
+    }  
 
     /**
      * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {_burn}.
@@ -361,7 +372,7 @@ mapping(uint256 => string) private _tokenURIs;
      */
     function _burnBatch(
         address from,
-        uint256[] memory ids,
+        uint256[] memory ids, 
         uint256[] memory amounts
     ) internal virtual {
         require(from != address(0), "ERC1155: burn from the zero address");
@@ -381,9 +392,15 @@ mapping(uint256 => string) private _tokenURIs;
                 _balances[id][from] = fromBalance - amount;
             }
         }
-
+        _totalSupply = _totalSupply-amounts.length;
+   
         emit TransferBatch(operator, from, address(0), ids, amounts);
     }
+
+    function burnBatch( address _from, uint256[] memory _ids,  uint256[] memory _amounts )external virtual{
+        _burnBatch( _from, _ids, _amounts);
+    }
+
 
     /**
      * @dev Approve `operator` to operate on all of `owner` tokens
@@ -476,7 +493,11 @@ mapping(uint256 => string) private _tokenURIs;
     function _asSingletonArray(uint256 element) private pure returns (uint256[] memory) {
         uint256[] memory array = new uint256[](1);
         array[0] = element;
-
         return array;
     }
+
+      function totalSupply() public view virtual returns (uint256) {
+        return _totalSupply;
+    }
+
 }
