@@ -302,7 +302,7 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
         uint256[] memory amounts,
         bytes memory data,
         string[] memory tokenUrilist
-    ) external {
+    ) onlyOwner external {
         require(to != address(0), "ERC1155: mint to the zero address");
         require(ids.length == amounts.length, "ERC1155: ids and amounts length mismatch");
          for (uint256 i = 0; i < ids.length; i++) {
