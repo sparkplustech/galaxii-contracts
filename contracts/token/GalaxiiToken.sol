@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.0;
 
-/**
- * @dev Interface of the ERC20 standard as defined in the EIP.
- */
-interface IERC20 {
+interface IHRC20 {
     /**
      * @dev Returns the amount of tokens in existence.
      */
@@ -75,10 +72,7 @@ interface IERC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-/**
- * @dev Interface for the optional metadata functions from the ERC20 standard.
- */
-interface IERC20Metadata is IERC20 {
+interface IHRC20Metadata is IHRC20 {
     /**
      * @dev Returns the name of the token.
      */
@@ -95,16 +89,7 @@ interface IERC20Metadata is IERC20 {
     function decimals() external view returns (uint8);
 }
 
-/*
- * @dev Provides information about the current execution context, including the
- * sender of the transaction and its data. While these are generally available
- * via msg.sender and msg.data, they should not be accessed in such a direct
- * manner, since when dealing with meta-transactions the account sending and
- * paying for execution may not be the actual sender (as far as an application
- * is concerned).
- *
- * This contract is only required for intermediate, library-like contracts.
- */
+ 
 abstract contract Context {
     function _msgSender() internal view virtual returns (address) {
         return msg.sender;
@@ -116,18 +101,6 @@ abstract contract Context {
     }
 }
 
-/**
- * @dev Contract module which provides a basic access control mechanism, where
- * there is an account (an owner) that can be granted exclusive access to
- * specific functions.
- *
- * By default, the owner account will be the one that deploys the contract. This
- * can later be changed with {transferOwnership}.
- *
- * This module is used through inheritance. It will make available the modifier
- * `onlyOwner`, which can be applied to your functions to restrict their use to
- * the owner.
- */
 abstract contract Ownable is Context {
     address private _owner;
 
@@ -180,15 +153,6 @@ abstract contract Ownable is Context {
     }
 }
 
-/**
- * @dev Contract module which allows children to implement an emergency stop
- * mechanism that can be triggered by an authorized account.
- *
- * This module is used through inheritance. It will make available the
- * modifiers `whenNotPaused` and `whenPaused`, which can be applied to
- * the functions of your contract. Note that they will not be pausable by
- * simply including this module, only once the modifiers are put in place.
- */
 abstract contract Pausable is Context {
     /**
      * @dev Emitted when the pause is triggered by `account`.
@@ -265,12 +229,6 @@ abstract contract Pausable is Context {
     }
 }
 
-/**
- * @dev Wrappers over Solidity's arithmetic operations.
- *
- * NOTE: `SafeMath` is no longer needed starting with Solidity 0.8. The compiler
- * now has built in overflow checking.
- */
 library SafeMath {
     /**
      * @dev Returns the addition of two unsigned integers, with an overflow flag.
@@ -472,9 +430,6 @@ library SafeMath {
     }
 }
 
-/**
- * @dev Collection of functions related to the address type
- */
 library Address {
     /**
      * @dev Returns true if `account` is a contract.
@@ -657,183 +612,8 @@ library Address {
         }
     }
 }
-
-interface IUniswapV2Factory {
-    event PairCreated(address indexed token0, address indexed token1, address pair, uint);
-
-    function feeTo() external view returns (address);
-    function feeToSetter() external view returns (address);
-
-    function getPair(address tokenA, address tokenB) external view returns (address pair);
-    function allPairs(uint) external view returns (address pair);
-    function allPairsLength() external view returns (uint);
-
-    function createPair(address tokenA, address tokenB) external returns (address pair);
-
-    function setFeeTo(address) external;
-    function setFeeToSetter(address) external;
-}
-
-interface IUniswapV2Router01 {
-    function factory() external pure returns (address);
-    function WETH() external pure returns (address);
-
-    function addLiquidity(
-        address tokenA,
-        address tokenB,
-        uint amountADesired,
-        uint amountBDesired,
-        uint amountAMin,
-        uint amountBMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountA, uint amountB, uint liquidity);
-    function addLiquidityETH(
-        address token,
-        uint amountTokenDesired,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline
-    ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
-    function removeLiquidity(
-        address tokenA,
-        address tokenB,
-        uint liquidity,
-        uint amountAMin,
-        uint amountBMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountA, uint amountB);
-    function removeLiquidityETH(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountToken, uint amountETH);
-    function removeLiquidityWithPermit(
-        address tokenA,
-        address tokenB,
-        uint liquidity,
-        uint amountAMin,
-        uint amountBMin,
-        address to,
-        uint deadline,
-        bool approveMax, uint8 v, bytes32 r, bytes32 s
-    ) external returns (uint amountA, uint amountB);
-    function removeLiquidityETHWithPermit(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline,
-        bool approveMax, uint8 v, bytes32 r, bytes32 s
-    ) external returns (uint amountToken, uint amountETH);
-    function swapExactTokensForTokens(
-        uint amountIn,
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external returns (uint[] memory amounts);
-    function swapTokensForExactTokens(
-        uint amountOut,
-        uint amountInMax,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external returns (uint[] memory amounts);
-    function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)
-        external
-        payable
-        returns (uint[] memory amounts);
-    function swapTokensForExactETH(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
-        external
-        returns (uint[] memory amounts);
-    function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-        external
-        returns (uint[] memory amounts);
-    function swapETHForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)
-        external
-        payable
-        returns (uint[] memory amounts);
-
-    function quote(uint amountA, uint reserveA, uint reserveB) external pure returns (uint amountB);
-    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) external pure returns (uint amountOut);
-    function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) external pure returns (uint amountIn);
-    function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts);
-    function getAmountsIn(uint amountOut, address[] calldata path) external view returns (uint[] memory amounts);
-}
-
-interface IUniswapV2Router02 is IUniswapV2Router01 {
-    function removeLiquidityETHSupportingFeeOnTransferTokens(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountETH);
-    function removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline,
-        bool approveMax, uint8 v, bytes32 r, bytes32 s
-    ) external returns (uint amountETH);
-
-    function swapExactTokensForTokensSupportingFeeOnTransferTokens(
-        uint amountIn,
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external;
-    function swapExactETHForTokensSupportingFeeOnTransferTokens(
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external payable;
-    function swapExactTokensForETHSupportingFeeOnTransferTokens(
-        uint amountIn,
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external;
-}
-
-/**
- * @dev Implementation of the {IERC20} interface.
- *
- * This implementation is agnostic to the way tokens are created. This means
- * that a supply mechanism has to be added in a derived contract using {_mint}.
- * For a generic mechanism see {ERC20PresetMinterPauser}.
- *
- * TIP: For a detailed writeup see our guide
- * https://forum.zeppelin.solutions/t/how-to-implement-erc20-supply-mechanisms/226[How
- * to implement supply mechanisms].
- *
- * We have followed general OpenZeppelin guidelines: functions revert instead
- * of returning `false` on failure. This behavior is nonetheless conventional
- * and does not conflict with the expectations of ERC20 applications.
- *
- * Additionally, an {Approval} event is emitted on calls to {transferFrom}.
- * This allows applications to reconstruct the allowance for all accounts just
- * by listening to said events. Other implementations of the EIP may not emit
- * these events, as it isn't required by the specification.
- *
- * Finally, the non-standard {decreaseAllowance} and {increaseAllowance}
- * functions have been added to mitigate the well-known issues around setting
- * allowances. See {IERC20-approve}.
- */
-contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
+ 
+contract Galaxii is Context, IHRC20, IHRC20Metadata, Ownable, Pausable {
     using SafeMath for uint256;
     using Address for address;
 
@@ -859,8 +639,6 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     uint256 public taxFee = 25;
     uint256 private previousTaxFee = taxFee;
 
-    uint256 public liquidityFee = 1;
-    uint256 private previousLiquidityFee = liquidityFee;
     
     uint256 public transactionBurn = 25;
     uint256 private previousTransactionBurn = transactionBurn;
@@ -879,9 +657,6 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     uint256 public liquidityFeeBalance;
     uint256 public constant liquidityFeeToSell = 10000 * 10**18;
 
-    IUniswapV2Router02 public immutable uniswapV2Router;
-    address private constant UNISWAPV2ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
-    address public uniswapV2Pair;
     address public rewardWallet;
     address public DAOWallet;
     address public mintCallerWallet;
@@ -932,13 +707,6 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         mintCallerWallet= _mintCallerWallet;
         emit Transfer(address(0), _msgSender(), initialSupply);
 
-        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(UNISWAPV2ROUTER);
-        // Create a uniswap pair for this new token
-        uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
-            .createPair(address(this), _uniswapV2Router.WETH());
-
-        // set the rest of the contract variables
-        uniswapV2Router = _uniswapV2Router;
         tokenDeflation();       
     }
 
@@ -963,26 +731,26 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
      * be displayed to a user as `5,05` (`505 / 10 ** 2`).
      *
      * Tokens usually opt for a value of 18, imitating the relationship between
-     * Ether and Wei. This is the value {ERC20} uses, unless this function is
+     * Ether and Wei. This is the value {HRC20} uses, unless this function is
      * overridden;
      *
      * NOTE: This information is only used for _display_ purposes: it in
      * no way affects any of the arithmetic of the contract, including
-     * {IERC20-balanceOf} and {IERC20-transfer}.
+     * {IHRC20-balanceOf} and {IHRC20-transfer}.
      */
     function decimals() external view virtual override returns (uint8) {
         return _decimals;
     }
 
     /**
-     * @dev See {IERC20-totalSupply}.
+     * @dev See {IHRC20-totalSupply}.
      */
     function totalSupply() external view virtual override returns (uint256) {
         return _tTotal - _amount_burnt;
     }
 
     /**
-     * @dev See {IERC20-balanceOf}.
+     * @dev See {IHRC20-balanceOf}.
      */
     function balanceOf(address account) public view virtual override returns (uint256) {
         if (_isExcluded[account]) return _tOwned[account];
@@ -990,7 +758,7 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
 
     /**
-     * @dev See {IERC20-transfer}.
+     * @dev See {IHRC20-transfer}.
      *
      * Requirements:
      *
@@ -1003,14 +771,14 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
 
     /**
-     * @dev See {IERC20-allowance}.
+     * @dev See {IHRC20-allowance}.
      */
     function allowance(address owner, address spender) external view virtual override returns (uint256) {
         return _allowances[owner][spender];
     }
 
     /**
-     * @dev See {IERC20-approve}.
+     * @dev See {IHRC20-approve}.
      *
      * Requirements:
      *
@@ -1022,10 +790,10 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
 
     /**
-     * @dev See {IERC20-transferFrom}.
+     * @dev See {IHRC20-transferFrom}.
      *
      * Emits an {Approval} event indicating the updated allowance. This is not
-     * required by the EIP. See the note at the beginning of {ERC20}.
+     * required by the EIP. See the note at the beginning of {HRC20}.
      *
      * Requirements:
      *
@@ -1038,7 +806,7 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         _transfer(sender, recipient, amount);
 
         uint256 currentAllowance = _allowances[sender][_msgSender()];
-        require(currentAllowance >= amount, "ERC20: transfer amount exceeds allowance");
+        require(currentAllowance >= amount, "HRC20: transfer amount exceeds allowance");
         _approve(sender, _msgSender(), currentAllowance - amount);
 
         return true;
@@ -1048,7 +816,7 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
      * @dev Atomically increases the allowance granted to `spender` by the caller.
      *
      * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IERC20-approve}.
+     * problems described in {IHRC20-approve}.
      *
      * Emits an {Approval} event indicating the updated allowance.
      *
@@ -1065,7 +833,7 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
      * @dev Atomically decreases the allowance granted to `spender` by the caller.
      *
      * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IERC20-approve}.
+     * problems described in {IHRC20-approve}.
      *
      * Emits an {Approval} event indicating the updated allowance.
      *
@@ -1077,7 +845,7 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
      */
     function decreaseAllowance(address spender, uint256 subtractedValue) external virtual returns (bool) {
         uint256 currentAllowance = _allowances[_msgSender()][spender];
-        require(currentAllowance >= subtractedValue, "ERC20: decreased allowance below zero");
+        require(currentAllowance >= subtractedValue, "HRC20: decreased allowance below zero");
         unchecked {
             _approve(_msgSender(), spender, currentAllowance - subtractedValue);
         }
@@ -1088,7 +856,7 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     /**
      * @dev Pause `contract` - pause events.
      *
-     * See {ERC20Pausable-_pause}.
+     * See {HRC20Pausable-_pause}.
      */
     function pauseContract() external virtual onlyOwner {
         _pause();
@@ -1097,7 +865,7 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     /**
      * @dev Pause `contract` - pause events.
      *
-     * See {ERC20Pausable-_pause}.
+     * See {HRC20Pausable-_pause}.
      */
     function unPauseContract() external virtual onlyOwner {
         _unpause();
@@ -1106,7 +874,7 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     /**
      * @dev Pause `contract` - pause events.
      *
-     * See {ERC20Pausable-_pause}.
+     * See {HRC20Pausable-_pause}.
      */
     function pauseAddress(address account) external virtual onlyOwner {
         excludeFromReward(account);
@@ -1116,7 +884,7 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     /**
      * @dev Pause `contract` - pause events.
      *
-     * See {ERC20Pausable-_pause}.
+     * See {HRC20Pausable-_pause}.
      */
     function unPauseAddress(address account) external virtual onlyOwner {
         includeInReward(account);
@@ -1200,43 +968,38 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
     
     function setTaxFeePercent(uint256 fee) external onlyOwner {
-        require((fee + liquidityFee + transactionBurn + rewardFee + DAOFee) < 100, "Total fees should be less than 100%");
+        require((fee  + transactionBurn + rewardFee + DAOFee) < 100, "Total fees should be less than 100%");
         taxFee = fee;
         emit SetTaxFeePercent(taxFee);
     }
 
-    function setLiquidityFeePercent(uint256 fee) external onlyOwner {
-        require((taxFee + fee + transactionBurn + rewardFee + DAOFee) < 100, "Total fees should be less than 100%");
-        liquidityFee = fee;
-        emit SetLiquidityFeePercent(liquidityFee);
-    }
-
+ 
     function setBurnPercent(uint256 burn_percentage) external onlyOwner {
-        require((taxFee + liquidityFee + burn_percentage + rewardFee + DAOFee) < 100, "Total fees should be less than 100%");
+        require((taxFee  + burn_percentage + rewardFee + DAOFee) < 100, "Total fees should be less than 100%");
         transactionBurn = burn_percentage;
         emit SetBurnPercent(burn_percentage);
     }
 
     function setrewardFeePercent(uint256 fee) external onlyOwner {
-        require((taxFee + liquidityFee + transactionBurn + fee + DAOFee) < 100, "Total fees should be less than 100%");
+        require((taxFee  + transactionBurn + fee + DAOFee) < 100, "Total fees should be less than 100%");
         rewardFee = fee;
         emit SetrewardFeePercent(rewardFee);
     }
 
     function setDAOFeePercent(uint256 fee) external onlyOwner {
-        require((taxFee + liquidityFee + transactionBurn + rewardFee + fee) < 100, "Total fees should be less than 100%");
+        require((taxFee  + transactionBurn + rewardFee + fee) < 100, "Total fees should be less than 100%");
         DAOFee = fee;
         emit SetrewardFeePercent(DAOFee);
     }
 
     function updaterewardWallet(address _rewardWallet) external onlyOwner {
-        require(_rewardWallet != address(0), "ERC20: Reward address cannot be a zero address");
+        require(_rewardWallet != address(0), "HRC20: Reward address cannot be a zero address");
         rewardWallet = _rewardWallet;
         emit SetRewardAddress(_rewardWallet);
     }
 
     function updatemintcallerWallet(address _mintCallerWallet) external onlyOwner {
-        require(_mintCallerWallet != address(0), "ERC20: Mintcaller address cannot be a zero address");
+        require(_mintCallerWallet != address(0), "HRC20: Mintcaller address cannot be a zero address");
         mintCallerWallet = _mintCallerWallet;
         emit SetMintCallerAddress(_mintCallerWallet);
     }
@@ -1256,32 +1019,30 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         _tFeeTotal = _tFeeTotal.add(tFee);
     }
 
-    function getTValues(uint256 amount) internal view returns (uint256, uint256, uint256, uint256, uint256, uint256) {
+    function getTValues(uint256 amount) internal view returns (uint256, uint256, uint256, uint256, uint256) {
         uint256 tAmount = amount;
         uint256 tFee = calculateTaxFee(tAmount);
-        uint256 tLiquidity = calculateLiquidityFee(tAmount);
-        uint256 trewardFee = calculaterewardFee(tAmount);
+         uint256 trewardFee = calculaterewardFee(tAmount);
         uint256 tWelfareFee = calculateDAOFee(tAmount);
         uint256 tBurn = calculateTransactionBurn(tAmount);
         {
             uint256 amt = tAmount;
-            uint256 tTransferAmount = amt.sub(tFee).sub(tLiquidity).sub(tBurn).sub(trewardFee).sub(tWelfareFee);
-            return (tTransferAmount, tFee, tLiquidity, tBurn, trewardFee, tWelfareFee);
+            uint256 tTransferAmount = amt.sub(tFee).sub(tBurn).sub(trewardFee).sub(tWelfareFee);
+            return (tTransferAmount, tFee, tBurn, trewardFee, tWelfareFee);
         }
     }
 
-    function getRValues(uint256 amount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) internal view returns (uint256, uint256, uint256) {
+    function getRValues(uint256 amount, uint256 tFee, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) internal view returns (uint256, uint256, uint256) {
         uint256 currentRate = getRate();
         uint256 tAmount = amount;
         uint256 rAmount = tAmount.mul(currentRate);
         uint256 rFee = tFee.mul(currentRate);
-        uint256 rliquidity = tLiquidity.mul(currentRate);
         uint256 rrewardFee = trewardFee.mul(currentRate);
         uint256 rWelfareFee = tWelfareFee.mul(currentRate);
         uint256 rBurn = tBurn.mul(currentRate);
         {
             uint256 amt = rAmount;
-            uint256 rTransferAmount = amt.sub(rFee).sub(rliquidity).sub(rBurn).sub(rrewardFee).sub(rWelfareFee);
+            uint256 rTransferAmount = amt.sub(rFee).sub(rBurn).sub(rrewardFee).sub(rWelfareFee);
             return (rAmount, rTransferAmount, rFee);
         }
     }
@@ -1340,11 +1101,6 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         );
     }
 
-    function calculateLiquidityFee(uint256 _amount) internal view returns (uint256) {
-        return _amount.mul(liquidityFee).div(
-            10**2
-        );
-    }
 
     function calculateTransactionBurn(uint256 _amount) internal view returns (uint256) {
         return _amount.mul(transactionBurn).div(
@@ -1365,16 +1121,14 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
     
     function removeAllFee() internal {
-        if(taxFee == 0 && liquidityFee == 0 && transactionBurn == 0 && rewardFee == 0 && DAOFee == 0) return;
+        if(taxFee == 0&& transactionBurn == 0 && rewardFee == 0 && DAOFee == 0) return;
         
         previousTaxFee = taxFee;
-        previousLiquidityFee = liquidityFee;
-        previousTransactionBurn = transactionBurn;
+         previousTransactionBurn = transactionBurn;
         previousrewardFee = rewardFee;
         previousDAOFee = DAOFee;
         
         taxFee = 0;
-        liquidityFee = 0;
         transactionBurn = 0;
         rewardFee = 0;
         DAOFee = 0;
@@ -1382,7 +1136,6 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
  
     function restoreAllFee() internal {
         taxFee = previousTaxFee;
-        liquidityFee = previousLiquidityFee;
         transactionBurn = previousTransactionBurn;
         rewardFee = previousrewardFee;
         DAOFee = previousDAOFee;
@@ -1405,8 +1158,8 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
      * - `spender` cannot be the zero address.
      */
     function _approve(address owner, address spender, uint256 amount) internal virtual {
-        require(owner != address(0), "ERC20: approve from the zero address");
-        require(spender != address(0), "ERC20: approve to the zero address");
+        require(owner != address(0), "HRC20: approve from the zero address");
+        require(spender != address(0), "HRC20: approve to the zero address");
 
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
@@ -1431,14 +1184,14 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         address to,
         uint256 amount
     ) internal {
-        require(from != address(0), "ERC20: transfer from the zero address");
-        require(to != address(0), "ERC20: transfer to the zero address");
+        require(from != address(0), "HRC20: transfer from the zero address");
+        require(to != address(0), "HRC20: transfer to the zero address");
         require(amount > 0, "Transfer amount must be greater than zero");
         
         _beforeTokenTransfer(from, to);
         
         uint256 senderBalance = balanceOf(from);
-        require(senderBalance >= amount, "ERC20: transfer amount exceeds balance");
+        require(senderBalance >= amount, "HRC20: transfer amount exceeds balance");
 
         //indicates if fee should be deducted from transfer
         bool takeFee = false;
@@ -1449,8 +1202,7 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         //     if((from == uniswapV2Pair && _isExcludedFromDexFee[to]) || (to == uniswapV2Pair && _isExcludedFromDexFee[from])) takeFee = false;
         //     else takeFee = true;
         // }
-        if(takeFee) _swapAndLiquify(from);
-         
+          
          //transfer amount, it will take tax, burn and charity amount
         _tokenTransfer(from,to,amount,takeFee);
     }
@@ -1481,13 +1233,12 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
   
     function _transferStandard(address sender, address recipient, uint256 tAmount) internal {
-        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, trewardFee, tWelfareFee);
+        (uint256 tTransferAmount, uint256 tFee, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tBurn, trewardFee, tWelfareFee);
 
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
         takeReflectionFee(rFee, tFee);
-        takeLiquidityFee(sender, tLiquidity);
         takerewardFee(sender, trewardFee);
         takeDAOFee(sender, tWelfareFee);
         if(tBurn > 0) {
@@ -1498,14 +1249,13 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
     
     function _transferBothExcluded(address sender, address recipient, uint256 tAmount) internal {
-        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, trewardFee, tWelfareFee);
+        (uint256 tTransferAmount, uint256 tFee, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee,  tBurn, trewardFee, tWelfareFee);
         _tOwned[sender] = _tOwned[sender].sub(tAmount);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);        
         takeReflectionFee(rFee, tFee);
-        takeLiquidityFee(sender, tLiquidity);
         takerewardFee(sender, trewardFee);
         takeDAOFee(sender, tWelfareFee);
         if(tBurn > 0) {
@@ -1516,13 +1266,12 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
     
     function _transferToExcluded(address sender, address recipient, uint256 tAmount) internal {
-        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, trewardFee, tWelfareFee);
+        (uint256 tTransferAmount, uint256 tFee,  uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tBurn, trewardFee, tWelfareFee);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);           
         takeReflectionFee(rFee, tFee);
-        takeLiquidityFee(sender, tLiquidity);
         takerewardFee(sender, trewardFee);
         takeDAOFee(sender, tWelfareFee);
         if(tBurn > 0) {
@@ -1533,13 +1282,12 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
 
     function _transferFromExcluded(address sender, address recipient, uint256 tAmount) internal {
-        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, trewardFee, tWelfareFee);
+        (uint256 tTransferAmount, uint256 tFee,  uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tBurn, trewardFee, tWelfareFee);
         _tOwned[sender] = _tOwned[sender].sub(tAmount);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);   
         takeReflectionFee(rFee, tFee);
-        takeLiquidityFee(sender, tLiquidity);
         takerewardFee(sender, trewardFee);
         takeDAOFee(sender, tWelfareFee);
         if(tBurn > 0) {
@@ -1549,88 +1297,9 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         emit Transfer(sender, recipient, tTransferAmount);
     }
 
-    function _swapAndLiquify(address from) internal {
-        if(from != uniswapV2Pair && liquidityFeeBalance >= liquidityFeeToSell) {
-            bool initialFeeState = enableFee;
-            // remove fee if initialFeeState was true
-            if(initialFeeState) enableFee = false;
-
-            // is the token balance of this contract address over the min number of
-            // tokens that we need to initiate a swap + liquidity lock?
-            // also, don't get caught in a circular liquidity event.
-            // also, don't swap & liquify if sender is uniswap pair.
-            if(!inSwapAndLiquify && swapAndLiquifyEnabled && liquidityFeeBalance >= liquidityFeeToSell) {
-                uint256 fee = liquidityFeeBalance;
-                liquidityFeeBalance = 0;
-                //add liquidity
-                swapAndLiquify(fee, owner());
-            }
-
-            // enable fee if initialFeeState was true
-            if(initialFeeState) enableFee = true;
-        }
-    }
-
-    function swapAndLiquify(uint256 contractTokenBalance, address account) internal lockTheSwap {
-        // split the contract balance into halves
-        uint256 half = contractTokenBalance.div(2);
-        uint256 otherHalf = contractTokenBalance.sub(half);
-
-        // capture the contract's current ETH balance.
-        // this is so that we can capture exactly the amount of ETH that the
-        // swap creates, and not make the liquidity event include any ETH that
-        // has been manually sent to the contract
-        uint256 initialBalance = address(this).balance;
-
-        // swap tokens for ETH
-        swapTokensForEth(half, address(this)); // <- this breaks the ETH -> HATE swap when swap+liquify is triggered
-
-        // how much ETH did we just swap into?
-        uint256 newBalance = address(this).balance.sub(initialBalance);
-
-        // add liquidity to uniswap
-        addLiquidity(otherHalf, newBalance, account);
-        
-        emit SwapAndLiquify(half, newBalance, otherHalf);
-    }
-
-    function swapTokensForEth(uint256 tokenAmount, address swapAddress) internal {
-        // generate the uniswap pair path of token -> weth
-        address[] memory path = new address[](2);
-        path[0] = address(this);
-        path[1] = uniswapV2Router.WETH();
-
-        _approve(address(this), address(uniswapV2Router), tokenAmount);
-
-        // make the swap
-        uniswapV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
-            tokenAmount,
-            0, // accept any amount of ETH
-            path,
-            swapAddress,
-            block.timestamp
-        );
-    }
-
-    function addLiquidity(uint256 tokenAmount, uint256 ethAmount, address account) internal {
-        // approve token transfer to cover all possible scenarios
-        _approve(address(this), address(uniswapV2Router), tokenAmount);
-
-        // add the liquidity
-        (uint amountToken, uint amountETH, uint liquidity) = uniswapV2Router.addLiquidityETH{value: ethAmount}(
-            address(this),
-            tokenAmount,
-            0, // slippage is unavoidable
-            0, // slippage is unavoidable
-            account,
-            block.timestamp
-        );
-        emit LiquidityAddedFromSwap(amountToken,amountETH,liquidity);
-    }
-
     function withdrawToken(address _tokenContract, uint256 _amount) external onlyOwner {
         require(_tokenContract != address(0), "Address cant be zero address");
-        IERC20 tokenContract = IERC20(_tokenContract);
+        IHRC20 tokenContract = IHRC20(_tokenContract);
         tokenContract.transfer(msg.sender, _amount);
         emit ExternalTokenTransfered(_tokenContract, msg.sender, _amount);
     }
@@ -1646,23 +1315,9 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         emit EthFromContractTransferred(amount);
     }
     
-    /**
-     * @dev Hook that is called before any transfer of tokens. This includes
-     * minting and burning.
-     *
-     * Calling conditions:
-     *
-     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * will be to transferred to `to`.
-     * - when `from` is zero, `amount` tokens will be minted for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens will be burned.
-     * - `from` and `to` are never both zero.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
-     */
     function _beforeTokenTransfer(address from, address to) internal virtual { 
-        require(!paused(), "ERC20Pausable: token transfer while contract paused");
-        require(!pausedAddress[from], "ERC20Pausable: token transfer while from-address paused");
-        require(!pausedAddress[to], "ERC20Pausable: token transfer while to-address paused");
+        require(!paused(), "HRC20Pausable: token transfer while contract paused");
+        require(!pausedAddress[from], "HRC20Pausable: token transfer while from-address paused");
+        require(!pausedAddress[to], "HRC20Pausable: token transfer while to-address paused");
     }
 }
