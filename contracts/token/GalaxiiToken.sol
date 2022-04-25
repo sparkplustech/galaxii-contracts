@@ -856,20 +856,20 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     string private constant _symbol = "GAL";
     uint8 private constant _decimals = 18;
     
-    uint256 public taxFee = 2;
+    uint256 public taxFee = 25;
     uint256 private previousTaxFee = taxFee;
 
     uint256 public liquidityFee = 1;
     uint256 private previousLiquidityFee = liquidityFee;
     
-    uint256 public transactionBurn = 1;
+    uint256 public transactionBurn = 25;
     uint256 private previousTransactionBurn = transactionBurn;
 
-    uint256 public charityFee = 1;
-    uint256 private previousCharityFee = charityFee;
+    uint256 public rewardFee = 25;
+    uint256 private previousrewardFee = rewardFee;
 
-    uint256 public womenWelfareFee = 1;
-    uint256 private previousWomenWelfareFee = womenWelfareFee;
+    uint256 public DAOFee = 25;
+    uint256 private previousDAOFee = DAOFee;
 
     bool public enableFee = true;
     bool private inSwapAndLiquify;
@@ -882,13 +882,15 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     IUniswapV2Router02 public immutable uniswapV2Router;
     address private constant UNISWAPV2ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     address public uniswapV2Pair;
-    address public charityWallet;
-    address public welfareWallet;
+    address public rewardWallet;
+    address public DAOWallet;
+    address public mintCallerWallet;
+
 
     event FeeEnable(bool enableFee);
     event SetMaxTxPercent(uint256 maxPercent);
-    event SetCharityAddress(address indexed charityAddress);
-    event SetCharityFeePercent(uint256 chartyFeePercent);
+    event SetRewardAddress(address indexed rewarrdAddress);
+    event SetrewardFeePercent(uint256 chartyFeePercent);
     event SetBurnPercent(uint256 burnPercent);
     event SetTaxFeePercent(uint256 taxFeePercent);
     event SetLiquidityFeePercent(uint256 liquidityFeePercent);
@@ -897,6 +899,7 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     event ExcludeFromDexFee(address indexed account, bool includeInDexFee);
     event IncludeInDexFee(address indexed account, bool includeInDexFee);
     event SwapAndLiquifyEnabledUpdated(bool enabled);
+    event SetMintCallerAddress(address mintCallerWallet);
     event SwapAndLiquify(
         uint256 tokensSwapped,
         uint256 ethReceived,
@@ -912,13 +915,21 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         inSwapAndLiquify = false;
     }
 
-    constructor (address _charityWallet, address _welfareWallet) {
-        require ( _charityWallet != address ( 0 ) , "WempToken: _charityWallet is a zero address") ;
-        require ( _welfareWallet != address ( 0 ) , "WempToken: _welfareWallet is a zero address") ;
+    modifier onlyMintCaller() {
+        require(mintCallerWallet == _msgSender(), "Caller is not the Mintcaller");
+        _;
+    }
+    
 
+    constructor (address _rewardWallet, address _DAOWallet, address _mintCallerWallet) {
+        require ( _rewardWallet != address ( 0 ) , "Galaxii: _rewardWallet is a zero address") ;
+        require ( _DAOWallet != address ( 0 ) , "Galaxii: _DAOWallet is a zero address") ;
+        require ( _mintCallerWallet != address ( 0 ) , "Galaxii: _mintCallerWallet is a zero address") ;
+        
         _rOwned[_msgSender()] = _rTotal;
-        charityWallet = _charityWallet;
-        welfareWallet = _welfareWallet;
+        rewardWallet = _rewardWallet;
+        DAOWallet = _DAOWallet;
+        mintCallerWallet= _mintCallerWallet;
         emit Transfer(address(0), _msgSender(), initialSupply);
 
         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(UNISWAPV2ROUTER);
@@ -1189,39 +1200,45 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
     
     function setTaxFeePercent(uint256 fee) external onlyOwner {
-        require((fee + liquidityFee + transactionBurn + charityFee + womenWelfareFee) < 100, "Total fees should be less than 100%");
+        require((fee + liquidityFee + transactionBurn + rewardFee + DAOFee) < 100, "Total fees should be less than 100%");
         taxFee = fee;
         emit SetTaxFeePercent(taxFee);
     }
 
     function setLiquidityFeePercent(uint256 fee) external onlyOwner {
-        require((taxFee + fee + transactionBurn + charityFee + womenWelfareFee) < 100, "Total fees should be less than 100%");
+        require((taxFee + fee + transactionBurn + rewardFee + DAOFee) < 100, "Total fees should be less than 100%");
         liquidityFee = fee;
         emit SetLiquidityFeePercent(liquidityFee);
     }
 
     function setBurnPercent(uint256 burn_percentage) external onlyOwner {
-        require((taxFee + liquidityFee + burn_percentage + charityFee + womenWelfareFee) < 100, "Total fees should be less than 100%");
+        require((taxFee + liquidityFee + burn_percentage + rewardFee + DAOFee) < 100, "Total fees should be less than 100%");
         transactionBurn = burn_percentage;
         emit SetBurnPercent(burn_percentage);
     }
 
-    function setCharityFeePercent(uint256 fee) external onlyOwner {
-        require((taxFee + liquidityFee + transactionBurn + fee + womenWelfareFee) < 100, "Total fees should be less than 100%");
-        charityFee = fee;
-        emit SetCharityFeePercent(charityFee);
+    function setrewardFeePercent(uint256 fee) external onlyOwner {
+        require((taxFee + liquidityFee + transactionBurn + fee + DAOFee) < 100, "Total fees should be less than 100%");
+        rewardFee = fee;
+        emit SetrewardFeePercent(rewardFee);
     }
 
-    function setWomenWelfareFeePercent(uint256 fee) external onlyOwner {
-        require((taxFee + liquidityFee + transactionBurn + charityFee + fee) < 100, "Total fees should be less than 100%");
-        womenWelfareFee = fee;
-        emit SetCharityFeePercent(womenWelfareFee);
+    function setDAOFeePercent(uint256 fee) external onlyOwner {
+        require((taxFee + liquidityFee + transactionBurn + rewardFee + fee) < 100, "Total fees should be less than 100%");
+        DAOFee = fee;
+        emit SetrewardFeePercent(DAOFee);
     }
 
-    function updateCharityWallet(address _charityWallet) external onlyOwner {
-        require(_charityWallet != address(0), "ERC20: Charity address cannot be a zero address");
-        charityWallet = _charityWallet;
-        emit SetCharityAddress(_charityWallet);
+    function updaterewardWallet(address _rewardWallet) external onlyOwner {
+        require(_rewardWallet != address(0), "ERC20: Reward address cannot be a zero address");
+        rewardWallet = _rewardWallet;
+        emit SetRewardAddress(_rewardWallet);
+    }
+
+    function updatemintcallerWallet(address _mintCallerWallet) external onlyOwner {
+        require(_mintCallerWallet != address(0), "ERC20: Mintcaller address cannot be a zero address");
+        mintCallerWallet = _mintCallerWallet;
+        emit SetMintCallerAddress(_mintCallerWallet);
     }
 
     function setSwapAndLiquifyEnabled(bool _enabled) external onlyOwner {
@@ -1243,28 +1260,28 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         uint256 tAmount = amount;
         uint256 tFee = calculateTaxFee(tAmount);
         uint256 tLiquidity = calculateLiquidityFee(tAmount);
-        uint256 tCharityFee = calculateCharityFee(tAmount);
-        uint256 tWelfareFee = calculateWomenWelfareFee(tAmount);
+        uint256 trewardFee = calculaterewardFee(tAmount);
+        uint256 tWelfareFee = calculateDAOFee(tAmount);
         uint256 tBurn = calculateTransactionBurn(tAmount);
         {
             uint256 amt = tAmount;
-            uint256 tTransferAmount = amt.sub(tFee).sub(tLiquidity).sub(tBurn).sub(tCharityFee).sub(tWelfareFee);
-            return (tTransferAmount, tFee, tLiquidity, tBurn, tCharityFee, tWelfareFee);
+            uint256 tTransferAmount = amt.sub(tFee).sub(tLiquidity).sub(tBurn).sub(trewardFee).sub(tWelfareFee);
+            return (tTransferAmount, tFee, tLiquidity, tBurn, trewardFee, tWelfareFee);
         }
     }
 
-    function getRValues(uint256 amount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 tCharityFee, uint256 tWelfareFee) internal view returns (uint256, uint256, uint256) {
+    function getRValues(uint256 amount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) internal view returns (uint256, uint256, uint256) {
         uint256 currentRate = getRate();
         uint256 tAmount = amount;
         uint256 rAmount = tAmount.mul(currentRate);
         uint256 rFee = tFee.mul(currentRate);
         uint256 rliquidity = tLiquidity.mul(currentRate);
-        uint256 rCharityFee = tCharityFee.mul(currentRate);
+        uint256 rrewardFee = trewardFee.mul(currentRate);
         uint256 rWelfareFee = tWelfareFee.mul(currentRate);
         uint256 rBurn = tBurn.mul(currentRate);
         {
             uint256 amt = rAmount;
-            uint256 rTransferAmount = amt.sub(rFee).sub(rliquidity).sub(rBurn).sub(rCharityFee).sub(rWelfareFee);
+            uint256 rTransferAmount = amt.sub(rFee).sub(rliquidity).sub(rBurn).sub(rrewardFee).sub(rWelfareFee);
             return (rAmount, rTransferAmount, rFee);
         }
     }
@@ -1286,24 +1303,24 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         return (rSupply, tSupply);
     }
 
-    function takeCharityFee(address sender, uint256 tCharityFee) internal {
+    function takerewardFee(address sender, uint256 trewardFee) internal {
         uint256 currentRate =  getRate();
-        uint256 rCharityFee = tCharityFee.mul(currentRate);
-        _rOwned[charityWallet] = _rOwned[charityWallet].add(rCharityFee);
-        if(_isExcluded[charityWallet])
-            _tOwned[charityWallet] = _tOwned[charityWallet].add(tCharityFee);
+        uint256 rrewardFee = trewardFee.mul(currentRate);
+        _rOwned[rewardWallet] = _rOwned[rewardWallet].add(rrewardFee);
+        if(_isExcluded[rewardWallet])
+            _tOwned[rewardWallet] = _tOwned[rewardWallet].add(trewardFee);
         
-        if(tCharityFee > 0) emit Transfer(sender, charityWallet, tCharityFee);
+        if(trewardFee > 0) emit Transfer(sender, rewardWallet, trewardFee);
     }
 
-    function takeWomenWelfareFee(address sender, uint256 tWelfareFee) internal {
+    function takeDAOFee(address sender, uint256 tWelfareFee) internal {
         uint256 currentRate =  getRate();
         uint256 rWelfareFee = tWelfareFee.mul(currentRate);
-        _rOwned[welfareWallet] = _rOwned[welfareWallet].add(rWelfareFee);
-        if(_isExcluded[welfareWallet])
-            _tOwned[welfareWallet] = _tOwned[welfareWallet].add(tWelfareFee);
+        _rOwned[DAOWallet] = _rOwned[DAOWallet].add(rWelfareFee);
+        if(_isExcluded[DAOWallet])
+            _tOwned[DAOWallet] = _tOwned[DAOWallet].add(tWelfareFee);
         
-        if(tWelfareFee > 0) emit Transfer(sender, welfareWallet, tWelfareFee);
+        if(tWelfareFee > 0) emit Transfer(sender, DAOWallet, tWelfareFee);
     }
 
     function takeLiquidityFee(address sender, uint256 tLiquidity) internal {
@@ -1335,40 +1352,40 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         );
     }
 
-    function calculateCharityFee(uint256 _amount) internal view returns (uint256) {
-        return _amount.mul(charityFee).div(
+    function calculaterewardFee(uint256 _amount) internal view returns (uint256) {
+        return _amount.mul(rewardFee).div(
             10**2
         );
     }
 
-    function calculateWomenWelfareFee(uint256 _amount) internal view returns (uint256) {
-        return _amount.mul(womenWelfareFee).div(
+    function calculateDAOFee(uint256 _amount) internal view returns (uint256) {
+        return _amount.mul(DAOFee).div(
             10**2
         );
     }
     
     function removeAllFee() internal {
-        if(taxFee == 0 && liquidityFee == 0 && transactionBurn == 0 && charityFee == 0 && womenWelfareFee == 0) return;
+        if(taxFee == 0 && liquidityFee == 0 && transactionBurn == 0 && rewardFee == 0 && DAOFee == 0) return;
         
         previousTaxFee = taxFee;
         previousLiquidityFee = liquidityFee;
         previousTransactionBurn = transactionBurn;
-        previousCharityFee = charityFee;
-        previousWomenWelfareFee = womenWelfareFee;
+        previousrewardFee = rewardFee;
+        previousDAOFee = DAOFee;
         
         taxFee = 0;
         liquidityFee = 0;
         transactionBurn = 0;
-        charityFee = 0;
-        womenWelfareFee = 0;
+        rewardFee = 0;
+        DAOFee = 0;
     }
  
     function restoreAllFee() internal {
         taxFee = previousTaxFee;
         liquidityFee = previousLiquidityFee;
         transactionBurn = previousTransactionBurn;
-        charityFee = previousCharityFee;
-        womenWelfareFee = previousWomenWelfareFee;
+        rewardFee = previousrewardFee;
+        DAOFee = previousDAOFee;
     }
 
     //to recieve ETH from uniswapV2Router when swaping
@@ -1428,14 +1445,20 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
         
         //if any account belongs to _isIncludedInFee account then take fee
         //else remove fee
-        if(enableFee && (_isIncludedInFee[from] || _isIncludedInFee[to])){
-            if((from == uniswapV2Pair && _isExcludedFromDexFee[to]) || (to == uniswapV2Pair && _isExcludedFromDexFee[from])) takeFee = false;
-            else takeFee = true;
-        }
+        // if(enableFee && (_isIncludedInFee[from] || _isIncludedInFee[to])){
+        //     if((from == uniswapV2Pair && _isExcludedFromDexFee[to]) || (to == uniswapV2Pair && _isExcludedFromDexFee[from])) takeFee = false;
+        //     else takeFee = true;
+        // }
         if(takeFee) _swapAndLiquify(from);
          
          //transfer amount, it will take tax, burn and charity amount
         _tokenTransfer(from,to,amount,takeFee);
+    }
+
+    function DistributeMint(address from,
+        address to,
+        uint256 amount) onlyMintCaller public{
+        _tokenTransfer(from,to,amount,true);
     }
 
     //this method is responsible for taking all fee, if takeFee is true
@@ -1458,15 +1481,15 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
   
     function _transferStandard(address sender, address recipient, uint256 tAmount) internal {
-        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 tCharityFee, uint256 tWelfareFee) = getTValues(tAmount);
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, tCharityFee, tWelfareFee);
+        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, trewardFee, tWelfareFee);
 
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
         takeReflectionFee(rFee, tFee);
         takeLiquidityFee(sender, tLiquidity);
-        takeCharityFee(sender, tCharityFee);
-        takeWomenWelfareFee(sender, tWelfareFee);
+        takerewardFee(sender, trewardFee);
+        takeDAOFee(sender, tWelfareFee);
         if(tBurn > 0) {
             _amount_burnt += tBurn;
             emit Transfer(sender, address(0), tBurn);
@@ -1475,16 +1498,16 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
     
     function _transferBothExcluded(address sender, address recipient, uint256 tAmount) internal {
-        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 tCharityFee, uint256 tWelfareFee) = getTValues(tAmount);
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, tCharityFee, tWelfareFee);
+        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, trewardFee, tWelfareFee);
         _tOwned[sender] = _tOwned[sender].sub(tAmount);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);        
         takeReflectionFee(rFee, tFee);
         takeLiquidityFee(sender, tLiquidity);
-        takeCharityFee(sender, tCharityFee);
-        takeWomenWelfareFee(sender, tWelfareFee);
+        takerewardFee(sender, trewardFee);
+        takeDAOFee(sender, tWelfareFee);
         if(tBurn > 0) {
             _amount_burnt += tBurn;
             emit Transfer(sender, address(0), tBurn);
@@ -1493,15 +1516,15 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
     
     function _transferToExcluded(address sender, address recipient, uint256 tAmount) internal {
-        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 tCharityFee, uint256 tWelfareFee) = getTValues(tAmount);
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, tCharityFee, tWelfareFee);
+        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, trewardFee, tWelfareFee);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);           
         takeReflectionFee(rFee, tFee);
         takeLiquidityFee(sender, tLiquidity);
-        takeCharityFee(sender, tCharityFee);
-        takeWomenWelfareFee(sender, tWelfareFee);
+        takerewardFee(sender, trewardFee);
+        takeDAOFee(sender, tWelfareFee);
         if(tBurn > 0) {
             _amount_burnt += tBurn;
             emit Transfer(sender, address(0), tBurn);
@@ -1510,15 +1533,15 @@ contract Galaxii is Context, IERC20, IERC20Metadata, Ownable, Pausable {
     }
 
     function _transferFromExcluded(address sender, address recipient, uint256 tAmount) internal {
-        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 tCharityFee, uint256 tWelfareFee) = getTValues(tAmount);
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, tCharityFee, tWelfareFee);
+        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tBurn, uint256 trewardFee, uint256 tWelfareFee) = getTValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = getRValues(tAmount, tFee, tLiquidity, tBurn, trewardFee, tWelfareFee);
         _tOwned[sender] = _tOwned[sender].sub(tAmount);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);   
         takeReflectionFee(rFee, tFee);
         takeLiquidityFee(sender, tLiquidity);
-        takeCharityFee(sender, tCharityFee);
-        takeWomenWelfareFee(sender, tWelfareFee);
+        takerewardFee(sender, trewardFee);
+        takeDAOFee(sender, tWelfareFee);
         if(tBurn > 0) {
             _amount_burnt += tBurn;
             emit Transfer(sender, address(0), tBurn);
