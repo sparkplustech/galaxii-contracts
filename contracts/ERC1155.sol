@@ -360,7 +360,7 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
     }
 
     function burn(uint256 _id, uint256 _amount) external virtual {
-        _burn(_msgSender() _id,_amount);
+        _burn(_msgSender(),id,_amount);
     }  
 
     /**
