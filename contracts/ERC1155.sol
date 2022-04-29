@@ -359,8 +359,8 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
         emit TransferSingle(operator, from, address(0), id, amount);
     }
 
-    function burn( address _from, uint256 _id, uint256 _amount) external virtual {
-        _burn(_from, _id,_amount);
+    function burn(uint256 _id, uint256 _amount) external virtual {
+        _burn(_msgSender() _id,_amount);
     }  
 
     /**
