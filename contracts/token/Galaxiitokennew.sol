@@ -583,6 +583,7 @@ function distributereflections(uint256 tAmount) external
        {
        _tOwned[sender]=_tOwned[sender]-tAmount;
        }
+       _rTotal=_rTotal-rAmount;
 
 }
        
