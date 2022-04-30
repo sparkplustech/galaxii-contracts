@@ -117,9 +117,14 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
 
     // Mapping from token ID to account balances
     mapping(uint256 => mapping(address => uint256)) private _balances;
+    
+    mapping(uint256 => uint256) private _nftprice;
 
-    mapping(uint256 => bool)) private _onsale;
-    mapping(uint256 => mapping(uint256 => uint256)) private _balances;
+    mapping(uint256 => bool) private _onsale;
+
+    mapping(uint256 => address) private _seller;
+
+ // i think repeated its declared above   mapping(uint256 => mapping(uint256 => uint256)) private _balances; 
 
     // Mapping from account to operator approvals
     mapping(address => mapping(address => bool)) private _operatorApprovals;
@@ -220,14 +225,21 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
         return _operatorApprovals[account][operator];
     }
 
-   function buy(address buyer, ) public virtual override {
-        _setApprovalForAll(_msgSender(), operator, approved);
+   function buy(uint256 nftid, uint256 amount, bytes memory data) public virtual override {
+        require(_msgSender.balance > amount);
+        address recipient = _seller[nftid];
+        transfer(recipient, amount);
+        _safeTransferFrom(_msgSender(), recipient , nftid, 1, data);
+        _onsale[ntfid] = false;
     }
 
-    function putforsale(uint256 nftid,unint256 price) external onlyowner
-    {
-        
+    function putforsale(uint256 nftid,unint256 price, address seller) external onlyowner
+    {  require(seller != address(0), "ERC1155: transfer to the zero address");
+     _onsale[ntfid] = true;
+      _nftprice[nftid] = price;
+      _seller[nftid] = seller;
     }
+    
 
 
     /**
