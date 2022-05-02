@@ -116,7 +116,7 @@ abstract contract Ownable is Context {
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
-    constructor () internal {
+    constructor () {
         address msgSender = _msgSender();
         _owner = msgSender;
         emit OwnershipTransferred(address(0), msgSender);
@@ -162,7 +162,8 @@ abstract contract Ownable is Context {
         _owner = _previousOwner;
     }
 }
-contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
+
+contract ERC1155Main is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
     using Address for address;
 
 
@@ -218,13 +219,18 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
      return _tokenURI(tokenId);
     }
     
+
+    function tokenURI(uint256 tokenId) public view virtual returns (string memory) {
+     return _tokenURI(tokenId);
+    }
+
     function _tokenURI(uint256 tokenId) internal view returns (string memory) {
     return _tokenURIs[tokenId];
-  }
+    }
 
-  function _setTokenURI(uint256 tokenId, string memory tokenUri) virtual internal {
-    _tokenURIs[tokenId] = tokenUri;
-  }
+    function _setTokenURI(uint256 tokenId, string memory tokenUri) virtual internal {
+      _tokenURIs[tokenId] = tokenUri;
+    }
     /**
      * @dev See {IERC1155-balanceOf}.
      *
@@ -276,10 +282,10 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
         return _operatorApprovals[account][operator];
     }
 
-function _msgsender () private returns(address)
-{
-    return msg.sender;
-}
+  function _msgsender () private returns(address)
+  {
+      return msg.sender;
+  }
   
 
     /**
