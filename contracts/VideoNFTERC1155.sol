@@ -93,7 +93,7 @@ interface IHRC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-interface IHRC20Metadata is IBEP20 {
+interface IHRC20Metadata is IHRC20 {
     /**
      * @dev Returns the name of the token.
      */
@@ -111,6 +111,59 @@ interface IHRC20Metadata is IBEP20 {
 }
 
 
+contract Ownable is Context {
+    address private _owner;
+    address private _previousOwner;
+    uint256 private _lockTime;
+
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    constructor () internal {
+        address msgSender = _msgSender();
+        _owner = msgSender;
+        emit OwnershipTransferred(address(0), msgSender);
+    }
+
+    function owner() public view returns (address) {
+        return _owner;
+    }
+
+    modifier onlyOwner() {
+        require(_owner == _msgSender(), "Ownable: caller is not the owner");
+        _;
+    }
+
+    function renounceOwnership() public virtual onlyOwner {
+        emit OwnershipTransferred(_owner, address(0));
+        _owner = address(0);
+    }
+
+    function transferOwnership(address newOwner) public virtual onlyOwner {
+        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        emit OwnershipTransferred(_owner, newOwner);
+        _owner = newOwner;
+    }
+
+    function geUnlockTime() public view returns (uint256) {
+        return _lockTime;
+    }
+    
+     //Locks the contract for owner for the amount of time provided
+    function lock(uint256 time) public virtual onlyOwner {
+        _previousOwner = _owner;
+        _owner = address(0);
+        _lockTime = now + time;
+        emit OwnershipTransferred(_owner, address(0));
+    }
+    
+    //Unlocks the contract for owner when _lockTime is exceeds
+    function unlock() public virtual {
+        require(_previousOwner == msg.sender, "You don't have permission to unlock");
+        require(now > _lockTime , "Contract is locked until 7 days");
+        emit OwnershipTransferred(_owner, _previousOwner);
+        _owner = _previousOwner;
+    }
+}
 contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
     using Address for address;
 
@@ -120,7 +173,7 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
     
     mapping(uint256 => uint256) private _nftprice;
 
-    mapping(uint256 => bool) private _onsale;
+    
 
     mapping(uint256 => address) private _seller;
 
@@ -134,7 +187,7 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
     uint256 private _totalSupply=0;
     string public baseExtension = ".json";
     mapping(uint256 => string) private _tokenURIs;
-
+    mapping (uint256=>address) public ownerof;
   
     /**
      * @dev See {_setURI}.
@@ -225,22 +278,11 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
         return _operatorApprovals[account][operator];
     }
 
-   function buy(uint256 nftid, uint256 amount, bytes memory data) public virtual override {
-        require(_msgSender.balance > amount);
-        address recipient = _seller[nftid];
-        transfer(recipient, amount);
-        _safeTransferFrom(_msgSender(), recipient , nftid, 1, data);
-        _onsale[ntfid] = false;
-    }
-
-    function putforsale(uint256 nftid,unint256 price, address seller) external onlyowner
-    {  require(seller != address(0), "ERC1155: transfer to the zero address");
-     _onsale[ntfid] = true;
-      _nftprice[nftid] = price;
-      _seller[nftid] = seller;
-    }
-    
-
+function _msgsender () private returns(address)
+{
+    return msg.sender;
+}
+  
 
     /**
      * @dev See {IERC1155-safeTransferFrom}.
@@ -257,6 +299,7 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
             "ERC1155: caller is not owner nor approved"
         );
         _safeTransferFrom(from, to, id, amount, data);
+       
     }
 
     /**
@@ -307,7 +350,7 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
             _balances[id][from] = fromBalance - amount;
         }
         _balances[id][to] += amount;
-
+         ownerof[id]=to;
         emit TransferSingle(operator, from, to, id, amount);
 
         _doSafeTransferAcceptanceCheck(operator, from, to, id, amount, data);
@@ -347,6 +390,7 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
                 _balances[id][from] = fromBalance - amount;
             }
             _balances[id][to] += amount;
+             ownerof[id]=to;
         }
 
         emit TransferBatch(operator, from, to, ids, amounts);
@@ -406,6 +450,7 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
         _beforeTokenTransfer(operator, address(0), to, _asSingletonArray(id), _asSingletonArray(amount), data);
 
         _balances[id][to] += amount;
+         ownerof[id]=to;
         _setTokenURI(id, tokenUri);
 
         emit TransferSingle(operator, address(0), to, id, amount);
@@ -447,6 +492,7 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
 
         for (uint256 i = 0; i < ids.length; i++) {
             _balances[ids[i]][to] += amounts[i];
+             ownerof[ids[i]]=to;
                     _setTokenURI(ids[i], tokenUrilist[i]);
 
         }
@@ -480,6 +526,7 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
         require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
         unchecked {
             _balances[id][from] = fromBalance - amount;
+             ownerof[id]=0x0000000000000000000000000000000000000000;
         }
         _totalSupply = _totalSupply-amount;
    
@@ -487,7 +534,7 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
     }
 
     function burn(uint256 _id, uint256 _amount) external virtual {
-        _burn(_msgSender(),id,_amount);
+        _burn(_msgsender(),_id,_amount);
     }  
 
     /**
@@ -543,6 +590,8 @@ contract ERC1155 is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
         _operatorApprovals[owner][operator] = approved;
         emit ApprovalForAll(owner, operator, approved);
     }
+
+     
 
     /**
      * @dev Hook that is called before any token transfer. This includes minting
