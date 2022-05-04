@@ -10,7 +10,7 @@ module.exports = {
     },
     hardhat: {},
     testnet: {
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+      url: "https://api.harmony.one",
       accounts: [
         `0x1a7ab01d299e0c0933cba7047392d46dcdb4af9749e1fdc6070e9fed5dc27c71`, //owner
       ],
@@ -20,10 +20,10 @@ module.exports = {
     apiKey: "R241G15DMJRXV5F9FEHWT5UJJYI4CPZ3Z3",
   },
   solidity: {
-    version: "0.8.0",
+    version: "0.8.13",
     settings: {
       optimizer: {
-        enabled: true,
+        enabled: false,
         runs: 200,
       },
     },

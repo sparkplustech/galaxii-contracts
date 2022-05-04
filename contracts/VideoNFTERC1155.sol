@@ -166,17 +166,10 @@ abstract contract Ownable is Context {
 contract ERC1155Main is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI {
     using Address for address;
 
-
     // Mapping from token ID to account balances
     mapping(uint256 => mapping(address => uint256)) private _balances;
     
     mapping(uint256 => uint256) private _nftprice;
-
-    
-
-    mapping(uint256 => address) private _seller;
-
- // i think repeated its declared above   mapping(uint256 => mapping(uint256 => uint256)) private _balances; 
 
     // Mapping from account to operator approvals
     mapping(address => mapping(address => bool)) private _operatorApprovals;
@@ -184,7 +177,6 @@ contract ERC1155Main is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI 
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
     uint256 private _totalSupply=0;
-    string public baseExtension = ".json";
     mapping(uint256 => string) private _tokenURIs;
     mapping (uint256=>address) public ownerof;
   
@@ -205,20 +197,9 @@ contract ERC1155Main is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI 
             super.supportsInterface(interfaceId);
     }
 
-    /**
-     * @dev See {IERC1155MetadataURI-uri}.
-     *
-     * This implementation returns the same URI for *all* token types. It relies
-     * on the token type ID substitution mechanism
-     * https://eips.ethereum.org/EIPS/eip-1155#metadata[defined in the EIP].
-     *
-     * Clients calling this function must replace the `\{id\}` substring with the
-     * actual token type ID.
-     */
     function uri(uint256 tokenId) public view virtual override returns (string memory) {
      return _tokenURI(tokenId);
     }
-    
 
     function tokenURI(uint256 tokenId) public view virtual returns (string memory) {
      return _tokenURI(tokenId);
@@ -282,11 +263,11 @@ contract ERC1155Main is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI 
         return _operatorApprovals[account][operator];
     }
 
-  function _msgsender () private returns(address)
-  {
-      return msg.sender;
-  }
-  
+    function _msgsender () internal virtual returns(address)
+    {
+        return msg.sender;
+    }
+    
 
     /**
      * @dev See {IERC1155-safeTransferFrom}.
@@ -521,19 +502,15 @@ contract ERC1155Main is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI 
         uint256 amount
     ) internal virtual {
         require(from != address(0), "ERC1155: burn from the zero address"); 
-
         address operator = _msgSender();
-
         _beforeTokenTransfer(operator, from, address(0), _asSingletonArray(id), _asSingletonArray(amount), "");
-
         uint256 fromBalance = _balances[id][from];
         require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
         unchecked {
             _balances[id][from] = fromBalance - amount;
              ownerof[id]=0x0000000000000000000000000000000000000000;
         }
-        _totalSupply = _totalSupply-amount;
-   
+        _totalSupply = _totalSupply-amount; 
         emit TransferSingle(operator, from, address(0), id, amount);
     }
 
@@ -555,15 +532,11 @@ contract ERC1155Main is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI 
     ) internal virtual {
         require(from != address(0), "ERC1155: burn from the zero address");
         require(ids.length == amounts.length, "ERC1155: ids and amounts length mismatch");
-
         address operator = _msgSender();
-
         _beforeTokenTransfer(operator, from, address(0), ids, amounts, "");
-
         for (uint256 i = 0; i < ids.length; i++) {
             uint256 id = ids[i];
             uint256 amount = amounts[i];
-
             uint256 fromBalance = _balances[id][from];
             require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
             unchecked {
@@ -571,7 +544,6 @@ contract ERC1155Main is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI 
             }
         }
         _totalSupply = _totalSupply-amounts.length;
-   
         emit TransferBatch(operator, from, address(0), ids, amounts);
     }
 
@@ -594,8 +566,6 @@ contract ERC1155Main is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI 
         _operatorApprovals[owner][operator] = approved;
         emit ApprovalForAll(owner, operator, approved);
     }
-
-     
 
     /**
      * @dev Hook that is called before any token transfer. This includes minting
@@ -676,7 +646,7 @@ contract ERC1155Main is Context, Ownable, ERC165, IERC1155, IERC1155MetadataURI 
         return array;
     }
 
-      function totalSupply() public view virtual returns (uint256) {
+    function totalSupply() public view virtual returns (uint256) {
         return _totalSupply;
     }
 

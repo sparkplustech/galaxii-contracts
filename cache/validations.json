@@ -1,0 +1,875 @@
+{
+  "version": "3.2",
+  "log": [
+    {
+      "IERC1155": {
+        "src": "@openzeppelin\\contracts\\token\\ERC1155\\IERC1155.sol:14",
+        "inherit": [
+          "IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "balanceOf(address,uint256)",
+          "balanceOfBatch(address[],uint256[])",
+          "setApprovalForAll(address,bool)",
+          "isApprovedForAll(address,address)",
+          "safeTransferFrom(address,address,uint256,uint256,bytes)",
+          "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "IERC1155Receiver": {
+        "src": "@openzeppelin\\contracts\\token\\ERC1155\\IERC1155Receiver.sol:11",
+        "inherit": [
+          "IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "onERC1155Received(address,address,uint256,uint256,bytes)",
+          "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "IERC1155MetadataURI": {
+        "src": "@openzeppelin\\contracts\\token\\ERC1155\\extensions\\IERC1155MetadataURI.sol:14",
+        "inherit": [
+          "IERC1155",
+          "IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "uri(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "Address": {
+        "src": "@openzeppelin\\contracts\\utils\\Address.sol:9",
+        "version": {
+          "withMetadata": "20bf915af3e55f1030b47007d8e16093b42c4411cd1b1df6cae051105ec9bdb6",
+          "withoutMetadata": "08d24783a787f8a51dea0c166bb6f91a4f0865e02d03d749f102d332e6ead0ff",
+          "linkedWithoutMetadata": "08d24783a787f8a51dea0c166bb6f91a4f0865e02d03d749f102d332e6ead0ff"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "delegatecall",
+            "src": "@openzeppelin\\contracts\\utils\\Address.sol:191"
+          }
+        ],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "Strings": {
+        "src": "@openzeppelin\\contracts\\utils\\Strings.sol:9",
+        "version": {
+          "withMetadata": "bb3df5ad8b079fae1265d1c294551f62b7f400f7ffeff2bd3d3b9f16d17f05c8",
+          "withoutMetadata": "08d24783a787f8a51dea0c166bb6f91a4f0865e02d03d749f102d332e6ead0ff",
+          "linkedWithoutMetadata": "08d24783a787f8a51dea0c166bb6f91a4f0865e02d03d749f102d332e6ead0ff"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "ERC165": {
+        "src": "@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol:22",
+        "inherit": [
+          "IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "IERC165": {
+        "src": "@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol:15",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "ERC1155Main": {
+        "src": "contracts\\VideoNFTERC1155.sol:166",
+        "version": {
+          "withMetadata": "cf84c38da31a43338ae90b3e15e2ba2519d5821bb4887578d2cb84326aab7373",
+          "withoutMetadata": "8d00bebff8fd372e8061b27afb241ae29801d973c2d8e5e69247b1469047dc84",
+          "linkedWithoutMetadata": "8d00bebff8fd372e8061b27afb241ae29801d973c2d8e5e69247b1469047dc84"
+        },
+        "inherit": [
+          "IERC1155MetadataURI",
+          "IERC1155",
+          "ERC165",
+          "IERC165",
+          "Ownable",
+          "Context"
+        ],
+        "libraries": [
+          "Address"
+        ],
+        "methods": [
+          "()",
+          "supportsInterface(bytes4)",
+          "uri(uint256)",
+          "tokenURI(uint256)",
+          "balanceOf(address,uint256)",
+          "balanceOfBatch(address[],uint256[])",
+          "setApprovalForAll(address,bool)",
+          "isApprovedForAll(address,address)",
+          "safeTransferFrom(address,address,uint256,uint256,bytes)",
+          "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)",
+          "_mint(address,uint256,uint256,bytes,string)",
+          "_mintBatch(address,uint256[],uint256[],bytes,string[])",
+          "burn(uint256,uint256)",
+          "burnBatch(address,uint256[],uint256[])",
+          "totalSupply()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "state-variable-assignment",
+            "name": "_totalSupply",
+            "src": "contracts\\VideoNFTERC1155.sol:179"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:113"
+            },
+            {
+              "label": "_previousOwner",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:114"
+            },
+            {
+              "label": "_lockTime",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:115"
+            },
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:170"
+            },
+            {
+              "label": "_nftprice",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:172"
+            },
+            {
+              "label": "_operatorApprovals",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:175"
+            },
+            {
+              "label": "_uri",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_string_storage",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:178"
+            },
+            {
+              "label": "_totalSupply",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_uint256",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:179"
+            },
+            {
+              "label": "_tokenURIs",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_mapping(t_uint256,t_string_storage)",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:180"
+            },
+            {
+              "label": "ownerof",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_mapping(t_uint256,t_address)",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:181"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+              "label": "mapping(address => mapping(address => bool))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_address)": {
+              "label": "mapping(uint256 => address)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(uint256 => mapping(address => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_string_storage)": {
+              "label": "mapping(uint256 => string)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.1",
+          "flat": true
+        }
+      },
+      "IHRC20": {
+        "src": "contracts\\VideoNFTERC1155.sol:14",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "totalSupply()",
+          "balanceOf(address)",
+          "burn(uint256)",
+          "transfer(address,uint256)",
+          "allowance(address,address)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "IHRC20Metadata": {
+        "src": "contracts\\VideoNFTERC1155.sol:94",
+        "inherit": [
+          "IHRC20"
+        ],
+        "libraries": [],
+        "methods": [
+          "name()",
+          "symbol()",
+          "decimals()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "Ownable": {
+        "src": "contracts\\VideoNFTERC1155.sol:112",
+        "inherit": [
+          "Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)",
+          "geUnlockTime()",
+          "lock(uint256)",
+          "unlock()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "contracts\\VideoNFTERC1155.sol:119"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:113"
+            },
+            {
+              "label": "_previousOwner",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:114"
+            },
+            {
+              "label": "_lockTime",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:115"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.1",
+          "flat": true
+        }
+      }
+    },
+    {
+      "IERC1155": {
+        "src": "@openzeppelin\\contracts\\token\\ERC1155\\IERC1155.sol:14",
+        "inherit": [
+          "IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "balanceOf(address,uint256)",
+          "balanceOfBatch(address[],uint256[])",
+          "setApprovalForAll(address,bool)",
+          "isApprovedForAll(address,address)",
+          "safeTransferFrom(address,address,uint256,uint256,bytes)",
+          "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "IERC1155Receiver": {
+        "src": "@openzeppelin\\contracts\\token\\ERC1155\\IERC1155Receiver.sol:11",
+        "inherit": [
+          "IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "onERC1155Received(address,address,uint256,uint256,bytes)",
+          "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "IERC1155MetadataURI": {
+        "src": "@openzeppelin\\contracts\\token\\ERC1155\\extensions\\IERC1155MetadataURI.sol:14",
+        "inherit": [
+          "IERC1155",
+          "IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "uri(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "Address": {
+        "src": "@openzeppelin\\contracts\\utils\\Address.sol:9",
+        "version": {
+          "withMetadata": "9b3a20a3b39df30d9cf91681973e5b0b8ffbf220fe04ec871518f4fe9e52e107",
+          "withoutMetadata": "08d24783a787f8a51dea0c166bb6f91a4f0865e02d03d749f102d332e6ead0ff",
+          "linkedWithoutMetadata": "08d24783a787f8a51dea0c166bb6f91a4f0865e02d03d749f102d332e6ead0ff"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "delegatecall",
+            "src": "@openzeppelin\\contracts\\utils\\Address.sol:191"
+          }
+        ],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "Context": {
+        "src": "@openzeppelin\\contracts\\utils\\Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "Strings": {
+        "src": "@openzeppelin\\contracts\\utils\\Strings.sol:9",
+        "version": {
+          "withMetadata": "4dfc1a5da420d6e9208aab61d53bfd5b0cc624f61660ffe45702f3a03af074f3",
+          "withoutMetadata": "08d24783a787f8a51dea0c166bb6f91a4f0865e02d03d749f102d332e6ead0ff",
+          "linkedWithoutMetadata": "08d24783a787f8a51dea0c166bb6f91a4f0865e02d03d749f102d332e6ead0ff"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "ERC165": {
+        "src": "@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol:22",
+        "inherit": [
+          "IERC165"
+        ],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "IERC165": {
+        "src": "@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol:15",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "supportsInterface(bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "ERC1155Main": {
+        "src": "contracts\\VideoNFTERC1155.sol:166",
+        "version": {
+          "withMetadata": "b8448523b7307151a30124166cccacce8b55f52b79769fbca9e764643ee7c66b",
+          "withoutMetadata": "af43231360f39e764e895209ce4905d092008f01a6468115ca939a9e8a96e697",
+          "linkedWithoutMetadata": "af43231360f39e764e895209ce4905d092008f01a6468115ca939a9e8a96e697"
+        },
+        "inherit": [
+          "IERC1155MetadataURI",
+          "IERC1155",
+          "ERC165",
+          "IERC165",
+          "Ownable",
+          "Context"
+        ],
+        "libraries": [
+          "Address"
+        ],
+        "methods": [
+          "()",
+          "supportsInterface(bytes4)",
+          "uri(uint256)",
+          "tokenURI(uint256)",
+          "balanceOf(address,uint256)",
+          "balanceOfBatch(address[],uint256[])",
+          "setApprovalForAll(address,bool)",
+          "isApprovedForAll(address,address)",
+          "safeTransferFrom(address,address,uint256,uint256,bytes)",
+          "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)",
+          "_mint(address,uint256,uint256,bytes,string)",
+          "_mintBatch(address,uint256[],uint256[],bytes,string[])",
+          "burn(uint256,uint256)",
+          "burnBatch(address,uint256[],uint256[])",
+          "totalSupply()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "state-variable-assignment",
+            "name": "_totalSupply",
+            "src": "contracts\\VideoNFTERC1155.sol:179"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:113"
+            },
+            {
+              "label": "_previousOwner",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:114"
+            },
+            {
+              "label": "_lockTime",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:115"
+            },
+            {
+              "label": "_balances",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:170"
+            },
+            {
+              "label": "_nftprice",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_mapping(t_uint256,t_uint256)",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:172"
+            },
+            {
+              "label": "_operatorApprovals",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:175"
+            },
+            {
+              "label": "_uri",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_string_storage",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:178"
+            },
+            {
+              "label": "_totalSupply",
+              "offset": 0,
+              "slot": "7",
+              "type": "t_uint256",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:179"
+            },
+            {
+              "label": "_tokenURIs",
+              "offset": 0,
+              "slot": "8",
+              "type": "t_mapping(t_uint256,t_string_storage)",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:180"
+            },
+            {
+              "label": "ownerof",
+              "offset": 0,
+              "slot": "9",
+              "type": "t_mapping(t_uint256,t_address)",
+              "contract": "ERC1155Main",
+              "src": "contracts\\VideoNFTERC1155.sol:181"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_bool)": {
+              "label": "mapping(address => bool)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+              "label": "mapping(address => mapping(address => bool))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_uint256)": {
+              "label": "mapping(address => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_address)": {
+              "label": "mapping(uint256 => address)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_mapping(t_address,t_uint256))": {
+              "label": "mapping(uint256 => mapping(address => uint256))",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_string_storage)": {
+              "label": "mapping(uint256 => string)",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_uint256,t_uint256)": {
+              "label": "mapping(uint256 => uint256)",
+              "numberOfBytes": "32"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.1",
+          "flat": true
+        }
+      },
+      "IHRC20": {
+        "src": "contracts\\VideoNFTERC1155.sol:14",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "totalSupply()",
+          "balanceOf(address)",
+          "burn(uint256)",
+          "transfer(address,uint256)",
+          "allowance(address,address)",
+          "approve(address,uint256)",
+          "transferFrom(address,address,uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "IHRC20Metadata": {
+        "src": "contracts\\VideoNFTERC1155.sol:94",
+        "inherit": [
+          "IHRC20"
+        ],
+        "libraries": [],
+        "methods": [
+          "name()",
+          "symbol()",
+          "decimals()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.1",
+          "flat": false
+        }
+      },
+      "Ownable": {
+        "src": "contracts\\VideoNFTERC1155.sol:112",
+        "inherit": [
+          "Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)",
+          "geUnlockTime()",
+          "lock(uint256)",
+          "unlock()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "contracts\\VideoNFTERC1155.sol:119"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:113"
+            },
+            {
+              "label": "_previousOwner",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:114"
+            },
+            {
+              "label": "_lockTime",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "Ownable",
+              "src": "contracts\\VideoNFTERC1155.sol:115"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.1",
+          "flat": true
+        }
+      }
+    }
+  ]
+}
