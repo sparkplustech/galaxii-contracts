@@ -1,2 +1,2 @@
 # galaxycontract
-galaxy contracts
+galaxy contract repository by SPARK+ 
